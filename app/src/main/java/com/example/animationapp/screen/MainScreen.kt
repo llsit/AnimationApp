@@ -26,11 +26,11 @@ fun MainScreen(
             .padding(32.dp),
         verticalArrangement = Arrangement.Top
     ) {
-        Button(onClick = { navController.navigate(NavigationItem.ANIMATION.route) }) {
+        Button(onClick = { navController.navigate(NavigationItem.Animation.route) }) {
             Text(text = "Animate Page")
         }
-        Button(onClick = { }) {
-            Text(text = "Animate Shape")
+        Button(onClick = { navController.navigate(NavigationItem.Transition.route) }) {
+            Text(text = "Transition Page")
         }
     }
 }

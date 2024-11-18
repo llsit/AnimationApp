@@ -14,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.animationapp.screen.AnimationScreen
 import com.example.animationapp.screen.MainScreen
+import com.example.animationapp.screen.TransitionScreen
 import com.example.animationapp.ui.theme.AnimationAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -40,8 +41,13 @@ class MainActivity : ComponentActivity() {
                                 modifier = Modifier.padding(innerPadding)
                             )
                         }
-                        composable(NavigationItem.ANIMATION.route) {
+                        composable(NavigationItem.Animation.route) {
                             AnimationScreen(navController = navController)
+                        }
+                        composable(NavigationItem.Transition.route) {
+                            TransitionScreen(
+                                navController = navController
+                            )
                         }
                     }
                 }
@@ -53,9 +59,11 @@ class MainActivity : ComponentActivity() {
 enum class Screen {
     MAIN,
     ANIMATION,
+    TRANSITION
 }
 
 sealed class NavigationItem(val route: String) {
     object Home : NavigationItem(Screen.MAIN.name)
-    object ANIMATION : NavigationItem(Screen.ANIMATION.name)
+    object Animation : NavigationItem(Screen.ANIMATION.name)
+    object Transition : NavigationItem(Screen.TRANSITION.name)
 }

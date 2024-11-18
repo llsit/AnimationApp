@@ -3,14 +3,19 @@ package com.example.animationapp.screen
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColor
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,6 +30,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Button
@@ -45,6 +51,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextMotion
 import androidx.compose.ui.tooling.preview.Preview
@@ -104,14 +111,39 @@ fun ItemBox(visible: Boolean, modifier: Modifier = Modifier) {
         targetValue = if (visible) 1.0f else 0f,
         label = "alpha"
     )
-    AnimatedVisibility(visible) {
+    val density = LocalDensity.current
+    val enter = slideInVertically {
+        // Slide in from 40 dp from the top.
+        with(density) { -40.dp.roundToPx() }
+    } + expandVertically(
+        // Expand from the top.
+        expandFrom = Alignment.Top
+    ) + fadeIn(
+        // Fade in with the initial alpha of 0.3f.
+        initialAlpha = 0.3f
+    )
+    val exit = slideOutVertically() + shrinkVertically() + fadeOut()
+    var expanded by remember { mutableStateOf(false) }
+    AnimatedVisibility(
+        visible,
+        enter = enter,
+        exit = exit
+    ) {
         Box(
             modifier = Modifier
-                .size(200.dp)
+                .width(200.dp)
+                .height(if (expanded) 400.dp else 200.dp)
+                .animateContentSize()
                 .clip(RoundedCornerShape(8.dp))
                 .background(Color.Cyan)
                 .graphicsLayer {
                     alpha = animatedAlpha
+                }
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) {
+                    expanded = !expanded
                 },
             contentAlignment = Alignment.Center
         ) {
@@ -178,7 +210,7 @@ fun LoadingContent() {
         state,
         transitionSpec = {
             fadeIn(
-                animationSpec = tween(3000)
+                animationSpec = tween(2000)
             ) togetherWith fadeOut(animationSpec = tween(3000))
         },
         modifier = Modifier.clickable(
