@@ -2,11 +2,13 @@ package com.example.animationapp.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -22,15 +24,19 @@ fun MainScreen(
 ) {
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .padding(32.dp),
-        verticalArrangement = Arrangement.Top
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(onClick = { navController.navigate(NavigationItem.Animation.route) }) {
             Text(text = "Animate Page")
         }
         Button(onClick = { navController.navigate(NavigationItem.Transition.route) }) {
             Text(text = "Transition Page")
+        }
+        Button(onClick = { navController.navigate(NavigationItem.ListItem.route) }) {
+            Text(text = "List Item Page")
         }
     }
 }
