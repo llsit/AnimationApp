@@ -1,8 +1,12 @@
 package com.example.animationapp.screen
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -24,10 +28,8 @@ fun ListItemScreen(navController: NavHostController) {
     val items = remember { mutableStateListOf<String>() }
     LaunchedEffect(Unit) {
         delay(2000)
-        for (i in 1..10) {
-            items.add(
-                "Item $i"
-            )
+        for (i in 1..20) {
+            items.add("Item $i")
         }
     }
 
@@ -41,11 +43,22 @@ fun ListItemScreen(navController: NavHostController) {
             )
         }
     ) { innerPadding ->
-        LazyColumn(modifier = Modifier.padding(innerPadding)) {
+        LazyColumn(
+            modifier = Modifier
+                .padding(innerPadding)
+        ) {
             items(items) { item ->
                 Row(
                     Modifier
-                        .animateItem()
+                        .animateItem(
+                            fadeInSpec = tween(durationMillis = 250),
+                            fadeOutSpec = tween(durationMillis = 100),
+                            placementSpec = spring(
+                                stiffness = Spring.StiffnessLow,
+                                dampingRatio = Spring.DampingRatioMediumBouncy
+                            )
+                        )
+                        .fillMaxWidth()
                         .padding(8.dp)
                         .background(Color.Cyan),
                     horizontalArrangement = Arrangement.Center
