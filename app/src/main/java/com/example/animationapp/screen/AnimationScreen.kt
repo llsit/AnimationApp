@@ -15,6 +15,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
@@ -90,23 +91,25 @@ fun AnimationScreen(
             ) {
                 HelloRotation()
                 HelloText()
+
                 Button(onClick = {
                     visible = !visible
                 }) {
                     Text("Click")
                 }
 
-                if (visible)
-                    ItemBox(visible)
+                ItemBox(visible)
 
                 LoadingContent()
+                Spacer(Modifier.height(8.dp))
+                AnimationAlpha()
             }
         }
     }
 }
 
 @Composable
-fun ItemBox(visible: Boolean, modifier: Modifier = Modifier) {
+fun ItemBox(visible: Boolean) {
     val animatedAlpha by animateFloatAsState(
         targetValue = if (visible) 1.0f else 0f,
         label = "alpha"
@@ -123,11 +126,17 @@ fun ItemBox(visible: Boolean, modifier: Modifier = Modifier) {
         initialAlpha = 0.3f
     )
     val exit = slideOutVertically() + shrinkVertically() + fadeOut()
+    val exitSlideOut = slideOutHorizontally(
+        targetOffsetX = { -it },
+        animationSpec = tween(durationMillis = 300)
+    ) + shrinkVertically(
+        animationSpec = tween(delayMillis = 300)
+    )
     var expanded by remember { mutableStateOf(false) }
     AnimatedVisibility(
         visible,
         enter = enter,
-        exit = exit
+        exit = exitSlideOut
     ) {
         Box(
             modifier = Modifier
@@ -193,6 +202,22 @@ fun HelloText() {
         color = {
             animatedColor
         },
+    )
+
+}
+
+@Composable
+fun AnimationAlpha(){
+    val enabled by remember { mutableStateOf(true) }
+
+    val alpha: Float by animateFloatAsState(if (enabled) 1f else 0.5f, label = "alpha")
+
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .height(200.dp)
+            .graphicsLayer(alpha = alpha)
+            .background(Color.Red)
     )
 
 }
@@ -264,7 +289,7 @@ private fun ErrorScreen() {
 private fun LoadedScreen() {
     Column(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxWidth(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -289,8 +314,7 @@ private fun LoadedScreen() {
 @Composable
 private fun LoadingScreen() {
     Column(
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
 
