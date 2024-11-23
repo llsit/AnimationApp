@@ -37,6 +37,9 @@ fun MainScreen(
         Button(onClick = { navController.navigate(NavigationItem.ListItem.route) }) {
             Text(text = "List Item Page")
         }
+        Button(onClick = { navController.navigate(NavigationItem.AnimationState.route) }) {
+            Text(text = "Animate State Page")
+        }
     }
 }
 

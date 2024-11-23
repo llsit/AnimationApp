@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.animationapp.screen.AnimateStateScreen
 import com.example.animationapp.screen.AnimationScreen
 import com.example.animationapp.screen.ListItemScreen
 import com.example.animationapp.screen.MainScreen
@@ -55,6 +56,11 @@ class MainActivity : ComponentActivity() {
                                 navController = navController
                             )
                         }
+                        composable(NavigationItem.AnimationState.route) {
+                            AnimateStateScreen(
+                                navController = navController
+                            )
+                        }
                     }
                 }
             }
@@ -66,7 +72,8 @@ enum class Screen {
     MAIN,
     ANIMATION,
     TRANSITION,
-    LIST_ITEM
+    LIST_ITEM,
+    ANIMATION_STATE
 }
 
 sealed class NavigationItem(val route: String) {
@@ -74,4 +81,5 @@ sealed class NavigationItem(val route: String) {
     object Animation : NavigationItem(Screen.ANIMATION.name)
     object Transition : NavigationItem(Screen.TRANSITION.name)
     object ListItem : NavigationItem(Screen.LIST_ITEM.name)
+    object AnimationState : NavigationItem(Screen.ANIMATION_STATE.name)
 }

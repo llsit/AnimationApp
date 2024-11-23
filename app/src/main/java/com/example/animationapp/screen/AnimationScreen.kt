@@ -5,11 +5,13 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -35,7 +37,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -62,6 +63,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.animationapp.R
 import com.example.animationapp.component.CustomToolbar
+import com.example.animationapp.component.LoadingScreen
 import com.example.animationapp.ui.theme.AnimationAppTheme
 import kotlinx.coroutines.delay
 
@@ -102,7 +104,7 @@ fun AnimationScreen(
 
                 LoadingContent()
                 Spacer(Modifier.height(8.dp))
-                AnimationAlpha()
+                InfiiteTransition()
             }
         }
     }
@@ -133,6 +135,12 @@ fun ItemBox(visible: Boolean) {
         animationSpec = tween(delayMillis = 300)
     )
     var expanded by remember { mutableStateOf(false) }
+    val transition = updateTransition(targetState = expanded, label = "")
+
+    val size by transition.animateDp(label = "") { state ->
+        if (state) 400.dp else 200.dp
+    }
+
     AnimatedVisibility(
         visible,
         enter = enter,
@@ -141,7 +149,7 @@ fun ItemBox(visible: Boolean) {
         Box(
             modifier = Modifier
                 .width(200.dp)
-                .height(if (expanded) 400.dp else 200.dp)
+                .height(size)
                 .animateContentSize()
                 .clip(RoundedCornerShape(8.dp))
                 .background(Color.Cyan)
@@ -207,19 +215,17 @@ fun HelloText() {
 }
 
 @Composable
-fun AnimationAlpha(){
-    val enabled by remember { mutableStateOf(true) }
-
-    val alpha: Float by animateFloatAsState(if (enabled) 1f else 0.5f, label = "alpha")
-
-    Box(
-        Modifier
-            .fillMaxWidth()
-            .height(200.dp)
-            .graphicsLayer(alpha = alpha)
-            .background(Color.Red)
+fun InfiiteTransition() {
+    val infiniteTransition = rememberInfiniteTransition(label = "")
+    val color by infiniteTransition.animateColor(
+        initialValue = Color.Red,
+        targetValue = Color.Blue,
+        animationSpec = infiniteRepeatable(animation = tween(1000)), label = ""
     )
 
+    Box(modifier = Modifier
+        .size(100.dp)
+        .background(color))
 }
 
 @Composable
@@ -308,20 +314,6 @@ private fun LoadedScreen() {
             contentScale = ContentScale.Crop
         )
         // [END_EXCLUDE]
-    }
-}
-
-@Composable
-private fun LoadingScreen() {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-
-    ) {
-        CircularProgressIndicator(modifier = Modifier.size(48.dp))
-        Spacer(modifier = Modifier.height(16.dp))
-        Text("Loading", fontSize = 18.sp)
     }
 }
 
